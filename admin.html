@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Administrador</title>
+<style>body{margin:0;background:#000;color:#fff;font-family:-apple-system,system-ui,sans-serif;padding:20px;max-width:560px;margin:auto}input,textarea,button{font:inherit;width:100%;padding:12px;border:0;border-radius:12px;background:#1c1c1e;color:#fff;margin:5px 0}button{background:#0a84ff;font-weight:600}.r{display:flex;gap:8px;align-items:center;background:#1c1c1e;border-radius:12px;padding:8px 10px;margin:5px 0}.r span{flex:1;font-size:.9rem}.r button{width:auto;padding:6px 10px;margin:0;font-size:.8rem}.m{color:#8e8e93;font-size:.85rem}textarea{height:180px;font-family:ui-monospace,monospace;font-size:.75rem}#ap{display:none}</style></head><body>
+<div id="pw"><h2>Administrador</h2><input id="p" type="password" placeholder="Contraseña"><button id="po">Entrar</button><div class="m" id="pm"></div></div>
+<div id="ap"><h2>Claves</h2>
+<div class="m">Pega aquí tu keys.json actual (si ya tienes) y pulsa Cargar.</div><textarea id="ta"></textarea><button id="ld">Cargar</button>
+<input id="nm" placeholder="Nombre del usuario"><input id="dv" placeholder="Código de dispositivo (opcional)"><input id="ek" placeholder="Clave existente (opcional, para rehacer el enlace)">
+<button id="ad">Crear clave</button><div id="out" class="m"></div>
+<div id="ls"></div>
+<h3>keys.json (cópialo y súbelo a GitHub)</h3><textarea id="js" readonly></textarea><button id="cp">Copiar</button>
+<div class="m">Frase / cierre</div><input id="ph" value="pensaste en"><input id="cl" value="cierto"></div>
+<script>
+var $=function(i){return document.getElementById(i)},L=[];
+function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
+$('po').onclick=async function(){var v=$('p').value;if(v.length<4){$('pm').textContent='Mínimo 4 caracteres';return}var h=await sha('camilo:'+v),s=localStorage.getItem('ah');
+ if(!s){localStorage.setItem('ah',h)}else if(s!==h){$('pm').textContent='Contraseña incorrecta';return}$('pw').style.display='none';$('ap').style.display='block'};
+function gen(){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<12;i++)s+=a[Math.floor(Math.random()*a.length)];return s}
+function render(){$('ls').innerHTML='';L.forEach(function(e,i){var r=document.createElement('div');r.className='r';r.innerHTML='<span>'+e.n+(e.dev?' · '+e.dev:'')+(e.on===false?' · anulada':'')+'</span>';
+ var b=document.createElement('button');b.textContent=e.on===false?'Activar':'Anular';b.onclick=function(){e.on=e.on===false;render()};
+ var d=document.createElement('button');d.textContent='Borrar';d.onclick=function(){L.splice(i,1);render()};r.appendChild(b);r.appendChild(d);$('ls').appendChild(r)});
+ $('js').value=JSON.stringify({phrase:$('ph').value,closer:$('cl').value,keys:L},null,1)}
+$('ld').onclick=function(){try{var j=JSON.parse($('ta').value);L=j.keys||[];$('ph').value=j.phrase||$('ph').value;$('cl').value=j.closer||$('cl').value;render()}catch(e){$('out').textContent='JSON no válido'}};
+$('ad').onclick=async function(){var k=($('ek').value.trim()||gen()).toUpperCase(),h=await sha(k),t='pm'+(await sha('t:'+k)).slice(0,20);
+ var base=location.href.replace(/admin\.html.*$/,'');
+ if(!$('ek').value.trim()){L.push({n:$('nm').value.trim()||'Usuario',h:h,dev:$('dv').value.trim().toUpperCase(),on:true})}
+ $('out').innerHTML='Clave: <b>'+k+'</b><br>Enlace del cómplice:<br><b>'+base+'complice.html#'+t+'</b>';$('nm').value='';$('dv').value='';$('ek').value='';render()};
+$('ph').oninput=$('cl').oninput=render;$('cp').onclick=function(){navigator.clipboard.writeText($('js').value)};render();
+</script></body></html>

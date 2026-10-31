@@ -1,0 +1,8 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notas</title>
+<style>body{margin:0;background:#f2f2f7;color:#111;font-family:-apple-system,system-ui,sans-serif;padding:24px}input,button{font:inherit;width:100%;padding:14px;border:0;border-radius:12px;margin:6px 0}input{background:#fff}button{background:#ffd60a;font-weight:600}#c{background:#e5e5ea}#m{color:#6b6b70;font-size:.9rem;min-height:1.3em}</style></head><body>
+<h2>Notas</h2><input id="n" placeholder="Nombre" autocomplete="off"><button id="s">Guardar</button><button id="c">Borrar</button><div id="m"></div>
+<script>
+var t=location.hash.slice(1);
+function send(v){if(!t){m.textContent='Enlace incompleto';return}fetch('https://ntfy.sh/'+t,{method:'POST',body:v}).then(function(r){m.textContent=r.ok?(v==='-'?'Borrado ✓':'Guardado ✓'):'Error'},function(){m.textContent='Sin conexión'})}
+s.onclick=function(){var v=n.value.trim();if(v){send(v);n.value=''}};c.onclick=function(){send('-')};
+</script></body></html>
