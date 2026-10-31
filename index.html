@@ -23,11 +23,19 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 #dock{margin:0 12px calc(env(safe-area-inset-bottom,0px) + 22px);padding:14px;border-radius:30px;background:#ffffff33;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);justify-items:center}
 #dock .ic i{width:58px;height:58px}
 #gal{background:#000}
-#gh{padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 6px}#gh b{font-size:1.9rem}
-#grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;align-content:start;padding-bottom:110px}
+#gh{position:absolute;top:0;left:0;right:0;z-index:5;padding:calc(env(safe-area-inset-top,0px) + 6px) 16px 18px;background:linear-gradient(#000 45%,#0000);pointer-events:none}#gh>*{pointer-events:auto}
+.gr{display:flex;align-items:center;justify-content:space-between;padding-top:34px}.gt{font-size:2.3rem;font-weight:700;letter-spacing:-.02em}.gb{display:flex;gap:10px;align-items:center}
+.gm,.gs{font-style:normal;background:#2c2c2ecc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:24px;height:44px;display:flex;align-items:center;justify-content:center}
+.gm{width:44px;flex-direction:column;gap:4px;align-items:flex-start;padding-left:12px}.gm s{display:block;height:2.5px;border-radius:2px;background:#fff;text-decoration:none}.gm s:nth-child(1){width:20px}.gm s:nth-child(2){width:14px}.gm s:nth-child(3){width:8px}.gs{padding:0 18px;font-size:1.05rem}
+.gw{margin-top:8px;font-weight:700;font-size:1rem;display:flex;align-items:center;gap:7px}
+#grid{position:absolute;inset:0;overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;align-content:start;padding:calc(env(safe-area-inset-top,0px) + 132px) 0 140px}
 #grid div{aspect-ratio:1;background-size:cover;background-position:center}
-#tabs{position:absolute;left:0;right:0;bottom:0;height:calc(env(safe-area-inset-bottom,0px) + 70px);background:#1c1c1ee6;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;justify-content:space-around;padding-top:10px;font-size:.62rem;color:#8e8e93}
-#tabs span{text-align:center}#tabs span:first-child{color:#0a84ff}#tabs s{display:block;font-size:1.4rem;text-decoration:none}
+#tabs{position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;align-items:center;z-index:4}
+#tabs .tp{flex:0 0 54%;display:flex;gap:4px;padding:5px;border-radius:36px;background:#2c2c2ecc;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+#tabs .tp div{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 6px;border-radius:30px;font-size:.7rem;color:#fff}#tabs .tp div.on{background:#ffffff26;color:#0a84ff}
+#tabs .ts{margin-left:auto;width:62px;height:62px;border-radius:50%;background:#2c2c2ecc;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;color:#fff}
+#tabs svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#vb{width:44px;height:44px;border-radius:50%;background:#ffffff26;color:#fff;font-size:1.7rem;padding:0 0 4px}
 .hb{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 6px);width:130px;height:5px;margin-left:-65px;border-radius:3px;background:#fff;opacity:.85;z-index:5}
 .hbt{position:absolute;left:25%;right:25%;bottom:0;height:34px;z-index:6}
 #home.shot #icons,#home.shot #dock{display:none}#home.shot #srch{position:absolute;left:50%;top:82%;margin:0;transform:translate(-50%,-50%);opacity:0}#hot{display:none;position:absolute;width:24%;height:11%;transform:translate(-50%,-50%);z-index:4}#home.shot #hot{display:block}
@@ -50,13 +58,18 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 
 <section id="home" class="scr"><div id="sb"><span id="clk"></span></div><div id="icons"></div><div id="srch">🔍 Buscar</div><div id="dock"></div><div id="hot"></div></section>
 
-<section id="gal" class="scr"><div id="gh"><b>Recientes</b><div class="mut" id="gc"></div></div><div id="grid"></div>
-<div id="tabs"><span><s>🖼</s>Fototeca</span><span><s>✨</s>Para ti</span><span><s>📁</s>Álbumes</span><span><s>🔍</s>Buscar</span></div><div class="hb"></div><div class="hbt" id="gh2"></div></section>
+<section id="gal" class="scr"><div id="grid"></div>
+<div id="gh"><div class="gr"><b class="gt">Fototeca</b><span class="gb"><i class="gm"><s></s><s></s><s></s></i><i class="gs">Seleccionar</i></span></div><div class="gw"><svg width="24" height="17" viewBox="0 0 24 18"><path fill="#fff" d="M6 17h12a5 5 0 0 0 .7-9.95A7 7 0 0 0 5.2 6.6 5.2 5.2 0 0 0 6 17z"/><rect x="11" y="5" width="2" height="6" fill="#000"/><rect x="11" y="12.5" width="2" height="2" fill="#000"/></svg>Almacenamiento lleno · Obtener más ›</div></div><span id="gc" hidden></span>
+<div id="tabs"><div class="tp"><div class="on"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="M4 18l5-5 4 3 3-3 4 4"/></svg>Fototeca</div><div><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="3"/><path d="M7 6h10M9 3h6"/></svg>Colecciones</div></div><div class="ts"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></div></div>
+<div class="hb"></div><div class="hbt" id="gh2"></div></section>
 
-<section id="vw" class="scr"><button id="vb">‹ Recientes</button><div class="bw" id="vbw"><img id="vimg" alt=""><div class="nm" id="vnm"></div></div></section>
+<section id="vw" class="scr"><button id="vb">‹</button><div class="bw" id="vbw"><img id="vimg" alt=""><div class="nm" id="vnm"></div></div></section>
 
 <section id="set" class="scr"><div>
 <h2>Ajustes</h2>
+<div class="mut">Enlace del cómplice (escribe el nombre y llega a tu iPhone)</div>
+<input id="clink" readonly style="font-size:.72rem">
+<div style="display:flex;gap:8px"><button id="ccopy">Copiar enlace</button><button class="p" id="cshare">Compartir</button></div>
 <div class="mut">Fotos de relleno (varias)</div><input type="file" id="fph" accept="image/*" multiple>
 <button id="clr">Quitar fotos de relleno</button>
 <div class="mut">Fondo de pantalla de inicio (tu foto)</div><input type="file" id="fwp" accept="image/*"><button id="cwp">Quitar fondo</button>
@@ -116,7 +129,7 @@ function compose(){
   return new Promise(function(res){var im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=im.width;c.height=im.height;var x=c.getContext('2d');x.drawImage(im,0,0);var p=D.p,fs=p.size/100*c.width;x.save();x.translate(p.x/100*c.width,p.y/100*c.height);x.rotate(p.rot*Math.PI/180);x.font='bold '+fs+'px "'+p.font+'",cursive';x.fillStyle=p.color;x.textAlign='center';x.textBaseline='middle';x.globalCompositeOperation='multiply';x.shadowColor=p.color;x.shadowBlur=fs*.03;x.fillText(name,0,0);x.restore();comp=c.toDataURL('image/jpeg',.9);res()};im.onerror=function(){comp=null;res()};im.src=D.board})}
 function openGal(){
   $('grid').innerHTML='';var n=D.photos.length;
-  if(!n)PH.forEach(function(g){tile('linear-gradient(135deg,'+g+')')});
+  var P2=['#2a2a30,#3a3a44','#1f1f26,#34343c','#26262e,#3b3b46','#303038,#222228'],pad=Math.max(0,15-(n+(D.board?1:0)));for(var i=0;i<pad;i++)tile('linear-gradient(135deg,'+P2[i%4]+')');
   D.photos.forEach(function(p){tile('url('+p+')',function(){view(p,false)})});
   if(D.board)tile('url('+(comp||D.board)+')',function(){view(D.board,true)});
   $('gc').textContent=(n+(D.board?1:0)||PH.length)+' fotos';show('gal');setTimeout(function(){$('grid').scrollTop=1e6},30);
@@ -137,6 +150,9 @@ function setDot(){$('dot').style.display=(active&&!recOn)?'block':'none'}
 function norm(t){return t.toLowerCase().replace(/[.,;:!?¿¡]/g,' ').replace(/\s+/g,' ')}
 function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 function tryApply(t){if(!armed||!active)return;var m=norm(t).match(new RegExp(esc(norm(cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(cfg.closer))));if(m)setName(m[1])}
+function cLink(){return topic?location.origin+location.pathname.replace(/[^\/]*$/,'')+'complice.html#'+topic:''}
+$('ccopy').onclick=function(){var l=cLink();if(!l){$('sm').textContent='Entra con tu clave primero';return}var ok=function(){$('sm').style.color='#8e8e93';$('sm').textContent='Enlace copiado ✓'};if(navigator.clipboard)navigator.clipboard.writeText(l).then(ok,function(){$('clink').select();document.execCommand('copy');ok()});else{$('clink').select();document.execCommand('copy');ok()}};
+$('cshare').onclick=function(){var l=cLink();if(!l)return;if(navigator.share)navigator.share({title:'Notas',url:l}).catch(function(){});else $('ccopy').onclick()};
 function micOff(){try{rec&&rec.abort()}catch(e){}recOn=false;setDot()}
 function startRec(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){diag('Micrófono: voz no disponible');return}if(recOn||!armed)return;
   rec=new SR();rec.lang='es-ES';rec.continuous=true;rec.interimResults=true;
@@ -177,7 +193,7 @@ $('m2').onclick=function(){$('menu').classList.remove('on');$('mi').value='';$('
 $('m3').onclick=function(){$('menu').classList.remove('on')};
 $('mok').onclick=function(){var v=$('mi').value.trim();if(v)setName(v);$('man').classList.remove('on')};
 var ctl=['x','y','size','rot','color','font','delay','dur'];
-function openSet(){show('set');$('simg').src=D.board||'';$('himg').src=D.wp||'';$('shot').checked=!!D.shot;mark();ctl.forEach(function(k){$(k).value=D.p[k]});$('sm').textContent='';prev(false)}
+function openSet(){show('set');$('clink').value=cLink();$('simg').src=D.board||'';$('himg').src=D.wp||'';$('shot').checked=!!D.shot;mark();ctl.forEach(function(k){$(k).value=D.p[k]});$('sm').textContent='';prev(false)}
 function rd(){ctl.forEach(function(k){var v=$(k).value;D.p[k]=(k==='color'||k==='font')?v:parseFloat(v)})}
 function prev(a){var el=$('snm'),t=$('tn').value||'Ricardo';if(a)reveal(el,D.p,t);else{el.textContent=t;styleNm(el,D.p);el.style.transition='none';el.classList.add('show')}}
 ctl.concat(['tn']).forEach(function(k){$(k).addEventListener('input',function(){rd();prev(false)})});
