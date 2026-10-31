@@ -12,13 +12,15 @@ html,body{margin:0;height:100%;background:#000;color:#fff;font-family:-apple-sys
 input,select,button{font:inherit;border:0;border-radius:12px;padding:12px;background:#1c1c1e;color:#fff;width:100%;margin:5px 0}
 button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}.msg{color:#ff453a;min-height:1.3em;font-size:.9rem}
 #lock{align-items:center;justify-content:center;padding:28px;text-align:center}#lock>*{max-width:340px}
-#home{background:radial-gradient(120% 80% at 20% 10%,#5b8cff 0,#7b4dd6 45%,#1b1146 100%)}
-#sb{display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 10px) 28px 0;font-weight:600;font-size:.95rem}
-#icons{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px;padding:34px 18px 0}
+#home{background:radial-gradient(120% 80% at 20% 10%,#5b8cff 0,#7b4dd6 45%,#1b1146 100%);background-size:cover;background-position:center}
+#sb{position:absolute;top:0;left:0;width:50%;height:calc(env(safe-area-inset-top,0px) + 40px);opacity:0;z-index:3}
+#icons{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 4px;padding:calc(env(safe-area-inset-top,0px) + 14px) 10px 0}
 .ic{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:.68rem;text-shadow:0 1px 3px #0006}
-.ic i{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.9rem;box-shadow:0 2px 6px #0004;transition:transform .12s}
+.ic i{position:relative;width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.9rem;box-shadow:0 2px 6px #0004;transition:transform .12s}
 .ic:active i{transform:scale(.9)}
-#dock{margin:auto 12px calc(env(safe-area-inset-bottom,0px) + 22px);padding:14px;border-radius:30px;background:#ffffff33;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);justify-items:center}
+.bd{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#ff3b30;color:#fff;font:600 .8rem/22px -apple-system,sans-serif;text-align:center;font-style:normal}
+#srch{margin:auto auto 14px;padding:7px 26px;border-radius:20px;background:#ffffff40;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:.9rem;color:#ffffffd9}
+#dock{margin:0 12px calc(env(safe-area-inset-bottom,0px) + 22px);padding:14px;border-radius:30px;background:#ffffff33;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);justify-items:center}
 #dock .ic i{width:58px;height:58px}
 #gal{background:#000}
 #gh{padding:calc(env(safe-area-inset-top,0px) + 12px) 16px 6px}#gh b{font-size:1.9rem}
@@ -45,7 +47,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <button class="p" id="go">Entrar</button><div class="msg" id="lmsg"></div>
 <div class="mut">Código de este dispositivo: <b id="dc"></b></div></section>
 
-<section id="home" class="scr"><div id="sb"><span id="clk"></span><span>5G ▂▄▆</span></div><div id="icons"></div><div id="dock"></div><div class="hb"></div></section>
+<section id="home" class="scr"><div id="sb"><span id="clk"></span></div><div id="icons"></div><div id="srch">🔍 Buscar</div><div id="dock"></div></section>
 
 <section id="gal" class="scr"><div id="gh"><b>Recientes</b><div class="mut" id="gc"></div></div><div id="grid"></div>
 <div id="tabs"><span><s>🖼</s>Fototeca</span><span><s>✨</s>Para ti</span><span><s>📁</s>Álbumes</span><span><s>🔍</s>Buscar</span></div><div class="hb"></div><div class="hbt" id="gh2"></div></section>
@@ -56,6 +58,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <h2>Ajustes</h2>
 <div class="mut">Fotos de relleno (varias)</div><input type="file" id="fph" accept="image/*" multiple>
 <button id="clr">Quitar fotos de relleno</button>
+<div class="mut">Fondo de pantalla de inicio (tu foto)</div><input type="file" id="fwp" accept="image/*"><button id="cwp">Quitar fondo</button>
 <div class="mut">Foto de la pizarra (va de última)</div><input type="file" id="fbd" accept="image/*">
 <div class="mut">Toca la foto para colocar el nombre</div>
 <div class="bw" id="sbw" style="margin:6px 0"><img id="simg" alt=""><div class="nm" id="snm"></div></div>
@@ -77,19 +80,20 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 (function(){
 var $=function(i){return document.getElementById(i)};
 var DEF={x:50,y:50,size:12,rot:-3,color:'#1b3a8c',font:'Bradley Hand',delay:1200,dur:1500};
-var D={photos:[],board:'',p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
+var D={photos:[],board:'',wp:'',p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
 var cfg={phrase:'pensaste en',closer:'cierto'};
 function show(id){['lock','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)})}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 function cap(s){return s.split(' ').filter(Boolean).map(function(w){return w[0].toUpperCase()+w.slice(1)}).join(' ')}
+function applyWp(){$('home').style.backgroundImage=D.wp?'url('+D.wp+')':''}
 function idb(m,v){return new Promise(function(res){var r=indexedDB.open('pm',1);r.onupgradeneeded=function(){r.result.createObjectStore('s')};r.onerror=function(){res(null)};r.onsuccess=function(){var st=r.result.transaction('s',m==='get'?'readonly':'readwrite').objectStore('s'),q=m==='get'?st.get('d'):st.put(v,'d');q.onsuccess=function(){res(q.result)};q.onerror=function(){res(null)}}})}
-function shrink(f,cb){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var sc=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);cb(c.toDataURL('image/jpeg',.8))};im.src=u}
+function shrink(f,cb,mx){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var sc=Math.min(1,(mx||1000)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);cb(c.toDataURL('image/jpeg',.8))};im.src=u}
 
 /* ---- pantalla de inicio ---- */
-var APPS=[['Mensajes','💬','#34c759'],['Calendario','📅','#f2f2f7'],['Fotos','🌼','#fff'],['Cámara','📷','#8e8e93'],['Mapas','🗺','#5ac8fa'],['Reloj','🕘','#1c1c1e'],['Tiempo','⛅','#4a90e2'],['Notas','📝','#ffd60a'],['Recordatorios','☑️','#f2f2f7'],['Bolsa','📈','#1c1c1e'],['Libros','📖','#ff9f0a'],['Galería','🖼','#ff375f'],['Salud','❤️','#f2f2f7'],['Cartera','💳','#1c1c1e'],['Ajustes','⚙️','#8e8e93'],['Archivos','📁','#0a84ff']];
-var DOCK=[['Teléfono','📞','#34c759'],['Mail','✉️','#0a84ff'],['Música','🎵','#ff375f'],['Calculadora','🧮','#ff9f0a']];
-function icon(a){var d=document.createElement('div');d.className='ic';d.innerHTML='<i style="background:'+a[2]+'">'+a[1]+'</i><span>'+a[0]+'</span>';d.onclick=function(){if(a[0]==='Galería')openGal()};return d}
+var APPS=[['FaceTime','📹','linear-gradient(#5ee06e,#27b43a)'],['Fotos','🌸','#fff'],['Mail','✉️','linear-gradient(#4aa8ff,#1b6fe0)','1,856'],['Notas','📝','linear-gradient(#ffd84a 25%,#f8f8f4 25%)'],['Recordatorios','☑️','#fff'],['Reloj','🕘','#111'],['App Store','🅰️','linear-gradient(#3fb4ff,#1a6df0)'],['Salud','❤️','#fff'],['Wallet','💳','#111'],['Configuración','⚙️','linear-gradient(#a8a8ad,#6e6e73)','3'],['Mapas','🧭','linear-gradient(#7ee08a,#e9f6ff)']];
+var DOCK=[['Instagram','📸','linear-gradient(45deg,#fdc468,#e1306c 50%,#833ab4)','12'],['Teléfono','📞','linear-gradient(#5ee06e,#27b43a)','104'],['WhatsApp','💬','linear-gradient(#5ee06e,#1fa855)','66'],['Chrome','🌐','#fff']];
+function icon(a){var d=document.createElement('div');d.className='ic';d.innerHTML='<i style="background:'+a[2]+'">'+a[1]+(a[3]?'<em class="bd">'+a[3]+'</em>':'')+'</i><span>'+(a[2]&&a[0]==='Instagram'||a[0]==='Teléfono'||a[0]==='WhatsApp'||a[0]==='Chrome'?'':a[0])+'</span>';d.onclick=function(){if(a[0]==='Fotos')openGal()};return d}
 APPS.forEach(function(a){$('icons').appendChild(icon(a))});DOCK.forEach(function(a){$('dock').appendChild(icon(a))});
 function clock(){$('clk').textContent=new Date().toLocaleTimeString('es-ES',{hour:'numeric',minute:'2-digit',hour12:false})}setInterval(clock,10000);clock();
 $('home').addEventListener('click',function(){if(active)startRec()});
@@ -144,12 +148,14 @@ function enter(key,silent){
 function lock(m){active=false;try{rec&&rec.abort()}catch(e){}if(es){es.close();es=null}$('lmsg').textContent=m||'';show('lock')}
 $('go').onclick=function(){var k=$('key').value.trim().toUpperCase();if(!k)return;$('lmsg').textContent='';enter(k)};
 function start(key){curKey=key;active=true;sha('t:'+key).then(function(h){topic='pm'+h.slice(0,20);relay()});
-  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.p=Object.assign({},DEF,d.p||{})}show('home');startRec()})}
+  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{})}applyWp();show('home');startRec()})}
 setInterval(function(){if(active&&curKey&&document.visibilityState==='visible')check(curKey).then(function(st){if(st!=='ok'){ls('k',null);lock(MSG[st])}},function(){})},300000);
 document.addEventListener('visibilitychange',function(){if(active&&document.visibilityState==='visible')enter(curKey)});
 
 /* ---- menú oculto y ajustes ---- */
 var gt=[];$('gear').onclick=function(){var n=Date.now();gt=gt.filter(function(x){return n-x<900});gt.push(n);if(gt.length>=3){gt=[];if(active)$('menu').classList.add('on')}};
+var st=[];$('srch').onclick=function(){var n=Date.now();st=st.filter(function(x){return n-x<1200});st.push(n);if(st.length>=3){st=[];if(active)$('menu').classList.add('on')}};
+var ct=[];$('sb').onclick=function(){var n=Date.now();ct=ct.filter(function(x){return n-x<1200});ct.push(n);if(ct.length>=3){ct=[];if(active)$('menu').classList.add('on')}};
 $('m1').onclick=function(){$('menu').classList.remove('on');openSet()};
 $('m2').onclick=function(){$('menu').classList.remove('on');$('mi').value='';$('man').classList.add('on')};
 $('m3').onclick=function(){$('menu').classList.remove('on')};
@@ -166,6 +172,7 @@ $('sv').onclick=function(){rd();idb('set',D).then(function(){$('sm').style.color
 $('fbd').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,function(u){D.board=u;$('simg').src=u;prev(false)})});
 $('fph').addEventListener('change',function(){Array.from(this.files).forEach(function(f){shrink(f,function(u){D.photos.push(u);$('sm').textContent=D.photos.length+' fotos de relleno (guarda)'})})});
 $('clr').onclick=function(){D.photos=[];$('sm').textContent='Fotos quitadas (guarda)'};
+$('fwp').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,function(u){D.wp=u;applyWp();$('sm').textContent='Fondo cambiado (guarda)'},1600)});$('cwp').onclick=function(){D.wp='';applyWp();$('sm').textContent='Fondo quitado (guarda)'};
 
 var k=ls('k');if(k)enter(k);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
