@@ -45,6 +45,8 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 #set{background:#000;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 40px;align-items:center}#set>div{width:100%;max-width:360px}
 .ov{position:fixed;inset:0;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;z-index:30}.ov.on{display:flex}.ov>*{max-width:340px}
 #gear{position:fixed;left:0;bottom:0;width:64px;height:64px;opacity:0;z-index:40;margin:0;padding:0}
+#gdot{position:fixed;top:max(6px,calc(env(safe-area-inset-top,0px)/2 - 5px));right:14px;width:9px;height:9px;border-radius:50%;background:#30d158;box-shadow:0 0 6px #30d158;opacity:0;transition:opacity .3s;z-index:60;pointer-events:none}
+#cl{-webkit-user-select:text;user-select:text;font-size:.8rem}
 #dot{position:fixed;top:calc(env(safe-area-inset-top,0px) + 6px);right:8px;width:5px;height:5px;border-radius:50%;background:#888;opacity:.5;display:none;z-index:45}
 </style></head><body>
 
@@ -77,12 +79,13 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <div class="mut">Duración de la escritura: <b id="durv"></b></div><input type="range" id="dur" min="300" max="4000" step="100">
 <div class="mut">Palabra clave de inicio (ej: pensaste en)</div><input id="kp" autocomplete="off" autocapitalize="none">
 <div class="mut">Palabra clave final (ej: cierto)</div><input id="kc" autocomplete="off" autocapitalize="none">
+<div class="mut">Link del cómplice (único para tu clave)</div><input id="cl" readonly><button id="ccp">Copiar link</button><button id="csh">Compartir link</button>
 <button id="play">Probar revelación</button><button class="p" id="sv">Guardar</button><button id="sb2">Volver</button>
 <div class="msg" id="sm"></div><div class="mut" id="diag">Micrófono: —</div><div class="mut" id="rl">Relé: —</div></div></section>
 
-<div id="menu" class="ov"><button class="p" id="m1">Ajustes</button><button id="m2">Escribir nombre a mano</button><button id="m3">Cerrar</button></div>
+<div id="menu" class="ov"><button class="p" id="m1">Ajustes</button><button id="m2">Escribir nombre a mano</button><button id="m4">Link del cómplice</button><button id="m3">Cerrar</button></div>
 <div id="man" class="ov"><input id="mi" placeholder="Nombre" autocomplete="off"><button class="p" id="mok">Aceptar</button></div>
-<div id="dot"></div><button id="gear" aria-label=""></button>
+<div id="dot"></div><div id="gdot"></div><button id="gear" aria-label=""></button>
 
 <script>
 (function(){
@@ -148,8 +151,11 @@ function startRec(){var SR=window.SpeechRecognition||window.webkitSpeechRecognit
 /* ---- relé del cómplice ---- */
 function relay(){if(es)es.close();$('rl').textContent='Relé: conectando';es=new EventSource('https://ntfy.sh/'+topic+'/sse');
   es.onopen=function(){$('rl').textContent='Relé: conectado'};es.onerror=function(){$('rl').textContent='Relé: reconectando'};
-  es.onmessage=function(e){var m;try{m=JSON.parse(e.data).message}catch(x){return}if(m)setName(m==='-'?'':m.trim())}}
+  es.onmessage=function(e){var m;try{m=JSON.parse(e.data).message}catch(x){return}if(m){var t=m.trim();setName(t==='-'?'':t);if(t&&t!=='-')flash()}}}
 
+var gdt=null;function flash(){var g=$('gdot');g.style.opacity=1;clearTimeout(gdt);gdt=setTimeout(function(){g.style.opacity=0},5000)}
+function cLink(){return topic?new URL('c.html',location.href).href.split('?')[0]+'?t='+topic:''}
+function shareLink(){var u=cLink();if(!u)return;if(navigator.share){navigator.share({title:'Cómplice',url:u}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){alert('Link copiado')},function(){window.prompt('Copia el link',u)})}else window.prompt('Copia el link',u)}
 /* ---- claves: una clave = un dispositivo (la asigna el administrador) ---- */
 var DEVC=ls('dev')||(function(){var d=Math.random().toString(36).slice(2,8).toUpperCase();ls('dev',d);return d})();$('dc').textContent=DEVC;
 function check(key){return fetch('keys.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){cfg.phrase=j.phrase||cfg.phrase;cfg.closer=j.closer||cfg.closer;
@@ -174,15 +180,18 @@ var st=[];$('srch').onclick=function(){var n=Date.now();st=st.filter(function(x)
 var ct=[];$('sb').onclick=function(){var n=Date.now();ct=ct.filter(function(x){return n-x<1200});ct.push(n);if(ct.length>=3){ct=[];if(active)$('menu').classList.add('on')}};
 $('m1').onclick=function(){$('menu').classList.remove('on');openSet()};
 $('m2').onclick=function(){$('menu').classList.remove('on');$('mi').value='';$('man').classList.add('on')};
+$('m4').onclick=function(){$('menu').classList.remove('on');shareLink()};
 $('m3').onclick=function(){$('menu').classList.remove('on')};
 $('mok').onclick=function(){var v=$('mi').value.trim();if(v)setName(v);$('man').classList.remove('on')};
 var ctl=['x','y','size','rot','color','font','delay','dur'];
-function openSet(){show('set');$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('sm').textContent='';$('kp').value=D.kw.phrase||cfg.phrase;$('kc').value=D.kw.closer||cfg.closer;vals();prev(false)}
+function openSet(){show('set');$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('cl').value=cLink();$('sm').textContent='';$('kp').value=D.kw.phrase||cfg.phrase;$('kc').value=D.kw.closer||cfg.closer;vals();prev(false)}
 function rd(){ctl.forEach(function(k){var v=$(k).value;D.p[k]=(k==='color'||k==='font')?v:parseFloat(v)})}
 function vals(){var g=function(k){return parseFloat($(k).value)};$('xv').textContent=g('x')+' %';$('yv').textContent=g('y')+' %';$('sizev').textContent=g('size');$('rotv').textContent=g('rot')+'°';$('delayv').textContent=g('delay')+' ms ('+(g('delay')/1000).toFixed(1)+' s)';$('durv').textContent=g('dur')+' ms ('+(g('dur')/1000).toFixed(1)+' s)'}
 function prev(a){var el=$('snm'),t=$('tn').value||'Ricardo';if(a)reveal(el,D.p,t);else{clearTimeout(rt);build(el,t);styleNm(el,D.p);el.classList.add('show')}}
 ctl.concat(['tn']).forEach(function(k){$(k).addEventListener('input',function(){rd();vals();prev(false)})});
 $('sbw').addEventListener('click',function(e){var r=this.getBoundingClientRect();D.p.x=Math.round((e.clientX-r.left)/r.width*100);D.p.y=Math.round((e.clientY-r.top)/r.height*100);$('x').value=D.p.x;$('y').value=D.p.y;vals();prev(false)});
+$('csh').onclick=shareLink;
+$('ccp').onclick=function(){var u=cLink();if(!u)return;if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){$('sm').style.color='#8e8e93';$('sm').textContent='Link copiado ✓'},function(){window.prompt('Copia el link',u)});else window.prompt('Copia el link',u)};
 $('play').onclick=function(){rd();prev(true)};
 $('sb2').onclick=function(){show('home')};
 $('sv').onclick=function(){rd();D.kw.phrase=$('kp').value.trim().toLowerCase();D.kw.closer=$('kc').value.trim().toLowerCase();idb('set',D).then(function(){$('sm').style.color='#8e8e93';$('sm').textContent='Guardado ✓'})};

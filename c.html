@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000"><title>Cómplice</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:-apple-system,"SF Pro Text",system-ui,sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.w{width:100%;max-width:340px}
+h2{margin:0 0 14px}
+input,button{font:inherit;border:0;border-radius:12px;padding:14px;background:#1c1c1e;color:#fff;width:100%;margin:5px 0}
+button.p{background:#0a84ff;font-weight:600}
+#m{min-height:1.4em;margin-top:10px;font-size:.95rem;color:#8e8e93}
+#m.ok{color:#30d158}#m.er{color:#ff453a}
+</style></head><body><div class="w">
+<h2>Cómplice</h2>
+<input id="n" placeholder="Nombre" autocomplete="off" autocapitalize="words">
+<button class="p" id="s">Enviar</button>
+<button id="c">Borrar nombre</button>
+<div id="m"></div></div>
+<script>
+var t=new URLSearchParams(location.search).get('t'),$=function(i){return document.getElementById(i)};
+function msg(x,c){$('m').textContent=x;$('m').className=c||''}
+function send(v){if(!t){msg('Link incompleto','er');return}
+ fetch('https://ntfy.sh/'+encodeURIComponent(t),{method:'POST',body:v}).then(function(r){if(!r.ok)throw 0;msg(v==='-'?'Borrado ✓':'Enviado ✓','ok')}).catch(function(){msg('No se pudo enviar, intenta otra vez','er')})}
+$('s').onclick=function(){var v=$('n').value.trim();if(!v)return;send(v)};
+$('c').onclick=function(){$('n').value='';send('-')};
+$('n').addEventListener('keydown',function(e){if(e.key==='Enter')$('s').click()});
+if(!t)msg('Link incompleto','er');
+</script></body></html>
