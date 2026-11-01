@@ -69,6 +69,8 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <button class="p" id="go">Entrar</button><div class="msg" id="lmsg"></div>
 <div class="mut">Código de este dispositivo: <b id="dc"></b></div></section>
 
+<section id="mode" class="scr" style="align-items:center;justify-content:center;padding:28px;text-align:center"><div style="width:100%;max-width:340px"><h2>¿Cómo vas a presentar?</h2><button class="p" id="mA">🎤 Con audio</button><button class="p" id="mC">👥 Con cómplice</button><div class="mut" style="margin-top:10px">Audio: la app escucha la palabra clave.<br>Cómplice: recibe el nombre desde su link.</div></div></section>
+
 <section id="home" class="scr"><div id="sb"><span id="clk"></span></div><div id="icons"></div><div id="srch">🔍 Buscar</div><div id="dock"></div></section>
 
 <section id="gal" class="scr"><div id="grid"><div id="gin"></div></div>
@@ -98,7 +100,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <button id="play">Probar revelación</button><button class="p" id="sv">Guardar</button><button id="sb2">Volver</button>
 <div class="msg" id="sm"></div><div class="mut" id="diag">Micrófono: —</div><div class="mut" id="rl">Relé: —</div></div></section>
 
-<div id="menu" class="ov"><button class="p" id="m1">Ajustes</button><button id="m2">Escribir nombre a mano</button><button id="m4">Link del cómplice</button><button id="m3">Cerrar</button></div>
+<div id="menu" class="ov"><button class="p" id="m1">Ajustes</button><button id="m2">Escribir nombre a mano</button><button id="m4">Link del cómplice</button><button id="m5">Cambiar modo (audio / cómplice)</button><button id="m3">Cerrar</button></div>
 <div id="man" class="ov"><input id="mi" placeholder="Nombre" autocomplete="off"><button class="p" id="mok">Aceptar</button></div>
 <div id="dot"></div><div id="gdot"></div><button id="gear" aria-label=""></button>
 
@@ -107,8 +109,8 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 var $=function(i){return document.getElementById(i)};
 var DEF={x:50,y:50,size:12,rot:-3,color:'#1b3a8c',font:'Caveat',delay:300,dur:1100};
 var D={photos:[],board:'',wp:'',kw:{phrase:'',closer:''},p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
-var cfg={phrase:'pensaste en',closer:'cierto'};
-function show(id){['lock','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)})}
+var mode='';var cfg={phrase:'pensaste en',closer:'cierto'};
+function show(id){['lock','mode','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)})}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 function cap(s){return s.split(' ').filter(Boolean).map(function(w){return w[0].toUpperCase()+w.slice(1)}).join(' ')}
@@ -122,7 +124,7 @@ var DOCK=[['Instagram','📸','linear-gradient(45deg,#fdc468,#e1306c 50%,#833ab4
 function icon(a){var d=document.createElement('div');d.className='ic';d.innerHTML='<i style="background:'+a[2]+'">'+a[1]+(a[3]?'<em class="bd">'+a[3]+'</em>':'')+'</i><span>'+(a[2]&&a[0]==='Instagram'||a[0]==='Teléfono'||a[0]==='WhatsApp'||a[0]==='Chrome'?'':a[0])+'</span>';d.onclick=function(){if(a[0]==='Fotos')openGal()};return d}
 APPS.forEach(function(a){$('icons').appendChild(icon(a))});DOCK.forEach(function(a){$('dock').appendChild(icon(a))});
 function clock(){$('clk').textContent=new Date().toLocaleTimeString('es-ES',{hour:'numeric',minute:'2-digit',hour12:false})}setInterval(clock,10000);clock();
-$('home').addEventListener('click',function(){if(active)startRec()});
+$('home').addEventListener('click',function(){if(active&&mode==='audio')startRec()});
 
 /* ---- galería ---- */
 var PH=['#6a7fdb,#a1c4fd','#f6d365,#fda085','#84fab0,#8fd3f4','#a18cd1,#fbc2eb','#fccb90,#d57eeb','#e0c3fc,#8ec5fc','#43e97b,#38f9d7','#fa709a,#fee140'];
@@ -156,21 +158,21 @@ function setName(n){name=n?cap(n):'';armed=!n;if(!n)$('vnm').classList.remove('s
 
 /* ---- voz ---- */
 function diag(t){$('diag').textContent=t}
-function setDot(){$('dot').style.display=(active&&!recOn)?'block':'none'}
+function setDot(){$('dot').style.display=(active&&mode==='audio'&&!recOn)?'block':'none'}
 function norm(t){return t.toLowerCase().replace(/[.,;:!?¿¡]/g,' ').replace(/\s+/g,' ')}
 function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function tryApply(t){if(!armed||!active)return;var m=norm(t).match(new RegExp(esc(norm(D.kw.phrase||cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(D.kw.closer||cfg.closer))));if(m)setName(m[1])}
+function tryApply(t){if(!armed||!active||mode!=='audio')return;var m=norm(t).match(new RegExp(esc(norm(D.kw.phrase||cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(D.kw.closer||cfg.closer))));if(m)setName(m[1])}
 function startRec(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){diag('Micrófono: voz no disponible');return}if(recOn)return;
   rec=new SR();rec.lang='es-ES';rec.continuous=true;rec.interimResults=true;
   rec.onresult=function(e){var s='';for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';diag('Micrófono: escuchando · oído: '+s.slice(-60));tryApply(s)};
-  rec.onend=function(){recOn=false;setDot();if(active&&!blocked)setTimeout(startRec,300)};
+  rec.onend=function(){recOn=false;setDot();if(active&&!blocked&&mode==='audio')setTimeout(startRec,300)};
   rec.onerror=function(e){var c=e&&e.error;diag('Micrófono: error '+c);if(c==='not-allowed'||c==='service-not-allowed')blocked=true};
   try{rec.start();recOn=true;blocked=false;diag('Micrófono: escuchando');setDot()}catch(e){diag('Micrófono: toca la pantalla');setDot()}}
 
 /* ---- relé del cómplice ---- */
 function relay(){if(es)es.close();$('rl').textContent='Relé: conectando';es=new EventSource('https://ntfy.sh/'+topic+'/sse');
   es.onopen=function(){$('rl').textContent='Relé: conectado'};es.onerror=function(){$('rl').textContent='Relé: reconectando'};
-  es.onmessage=function(e){var m;try{m=JSON.parse(e.data).message}catch(x){return}if(m){var t=m.trim();setName(t==='-'?'':t);if(t&&t!=='-')flash()}}}
+  es.onmessage=function(e){if(mode!=='comp')return;var m;try{m=JSON.parse(e.data).message}catch(x){return}if(m){var t=m.trim();setName(t==='-'?'':t);if(t&&t!=='-')flash()}}}
 
 var gdt=null;function flash(){var g=$('gdot');g.style.opacity=1;clearTimeout(gdt);gdt=setTimeout(function(){g.style.opacity=0},5000)}
 function cLink(){return topic?new URL('c.html',location.href).href.split('?')[0]+'?t='+topic:''}
@@ -189,7 +191,7 @@ function enter(key,silent){
 function lock(m){active=false;try{rec&&rec.abort()}catch(e){}if(es){es.close();es=null}$('lmsg').textContent=m||'';show('lock')}
 $('go').onclick=function(){var k=$('key').value.trim().toUpperCase();if(!k)return;$('lmsg').textContent='';enter(k)};
 function start(key){curKey=key;active=true;sha('t:'+key).then(function(h){topic='pm'+h.slice(0,20);relay()});
-  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{});D.kw=Object.assign({phrase:'',closer:''},d.kw||{})}applyWp();show('home');startRec()})}
+  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{});D.kw=Object.assign({phrase:'',closer:''},d.kw||{})}applyWp();show('mode')})}
 setInterval(function(){if(active&&curKey&&document.visibilityState==='visible')check(curKey).then(function(st){if(st!=='ok'){ls('k',null);lock(MSG[st])}},function(){})},300000);
 document.addEventListener('visibilitychange',function(){if(active&&document.visibilityState==='visible')enter(curKey)});
 
@@ -201,6 +203,10 @@ document.addEventListener('touchmove',function(e){if(tf===null||e.touches.length
 document.addEventListener('touchend',function(e){if(e.touches.length<2)tf=null},{passive:true});
 $('m1').onclick=function(){$('menu').classList.remove('on');openSet()};
 $('m2').onclick=function(){$('menu').classList.remove('on');$('mi').value='';$('man').classList.add('on')};
+function stopRec(){try{rec&&rec.abort()}catch(e){}recOn=false;setDot()}
+function setMode(x){mode=x;if(x==='audio'){show('home');startRec()}else{stopRec();show('home')}}
+$('mA').onclick=function(){setMode('audio')};$('mC').onclick=function(){setMode('comp')};
+$('m5').onclick=function(){$('menu').classList.remove('on');mode='';stopRec();show('mode')};
 $('m4').onclick=function(){$('menu').classList.remove('on');shareLink()};
 $('m3').onclick=function(){$('menu').classList.remove('on')};
 $('mok').onclick=function(){var v=$('mi').value.trim();if(v)setName(v);$('man').classList.remove('on')};
