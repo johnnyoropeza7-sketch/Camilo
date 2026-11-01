@@ -28,7 +28,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 #gal{background:#000;overflow:hidden}
 #grid{position:absolute;inset:0;overflow:auto;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch}
 #gin{margin-top:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:calc(env(safe-area-inset-top,0px) + 125px) 0 calc(env(safe-area-inset-bottom,0px) + 118px)}
-#gin div{container-type:inline-size;position:relative;overflow:hidden;aspect-ratio:1;background-size:cover;background-position:center;background-color:#1c1c1e}
+#gin>div{container-type:inline-size;position:relative;overflow:hidden;aspect-ratio:1;background-size:cover;background-position:center;background-color:#1c1c1e}
 #gh{position:absolute;top:0;left:0;right:0;z-index:4;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 30px;display:flex;align-items:flex-end;gap:10px;background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.45) 60%,transparent);pointer-events:none}
 #gh .tt{flex:1}
 #gh b{display:block;font-size:2.3rem;font-weight:800;letter-spacing:-.5px;line-height:1.05}
@@ -109,7 +109,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 var $=function(i){return document.getElementById(i)};
 var DEF={x:50,y:50,size:12,rot:-3,color:'#1b3a8c',font:'Caveat',delay:300,dur:1100};
 var D={photos:[],board:'',wp:'',kw:{phrase:'',closer:''},p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
-var mode='';var cfg={phrase:'pensaste en',closer:'cierto'};
+var mode='',vlang='es-MX';var cfg={phrase:'pensaste en',closer:'cierto'};
 function show(id){['lock','mode','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)});updGdot()}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
@@ -171,12 +171,19 @@ function diag(t){$('diag').textContent=t}
 function setDot(){$('dot').style.display=(active&&mode==='audio'&&!recOn)?'block':'none'}
 function norm(t){return t.toLowerCase().replace(/[.,;:!?¿¡]/g,' ').replace(/\s+/g,' ')}
 function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function tryApply(t){if(!armed||!active||mode!=='audio')return;var m=norm(t).match(new RegExp(esc(norm(D.kw.phrase||cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(D.kw.closer||cfg.closer))));if(m)setName(m[1])}
+function sk(w){return w.normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function lev(a,b){var m=a.length,n=b.length,d=[],i,j;for(i=0;i<=m;i++)d[i]=[i];for(j=1;j<=n;j++)d[0][j]=j;for(i=1;i<=m;i++)for(j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+function feq(a,b){return a===b||(b.length>=5&&lev(a,b)<=1)}
+function tryApply(t){if(!armed||!active||mode!=='audio')return;
+  var P=norm(D.kw.phrase||cfg.phrase).split(' ').filter(Boolean).map(sk),C=norm(D.kw.closer||cfg.closer).split(' ').filter(Boolean).map(sk),T=norm(t).split(' ').filter(Boolean),S=T.map(sk),i,k,n;
+  function at(a,w){for(var q=0;q<w.length;q++){if(a+q>=S.length||!feq(S[a+q],w[q]))return false}return true}
+  for(i=S.length-1;i>=0;i--){if(!at(i,P))continue;var j=i+P.length;if(S[j]==='a')j++;else if(S[j]==='el'&&S[j+1]==='nombre')j+=2;
+    for(n=1;n<=3;n++){k=j+n;if(k>S.length)break;var nm=T.slice(j,k);if(!nm.every(function(x){return /^[a-záéíóúñü]+$/.test(x)}))break;if(at(k,C)){setName(nm.join(' '));return}}}}
 function startRec(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){diag('Micrófono: voz no disponible');return}if(recOn)return;
-  rec=new SR();rec.lang='es-ES';rec.continuous=true;rec.interimResults=true;
-  rec.onresult=function(e){var s='';for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';diag('Micrófono: escuchando · oído: '+s.slice(-60));tryApply(s)};
-  rec.onend=function(){recOn=false;setDot();if(active&&!blocked&&mode==='audio')setTimeout(startRec,300)};
-  rec.onerror=function(e){var c=e&&e.error;diag('Micrófono: error '+c);if(c==='not-allowed'||c==='service-not-allowed')blocked=true};
+  rec=new SR();rec.lang=vlang;rec.maxAlternatives=3;rec.continuous=true;rec.interimResults=true;
+  rec.onresult=function(e){var alts=[],a,i,s;for(a=0;a<3;a++){s='';for(i=0;i<e.results.length;i++){var r=e.results[i];s+=(r[a]||r[0]).transcript+' '}alts.push(s)}diag('Micrófono: escuchando · oído: '+alts[0].slice(-60));for(var k=0;k<alts.length;k++){tryApply(alts[k]);if(!armed)break}};
+  rec.onend=function(){recOn=false;setDot();if(active&&!blocked&&mode==='audio')setTimeout(startRec,60)};
+  rec.onerror=function(e){var c=e&&e.error;diag('Micrófono: error '+c);if(c==='language-not-supported')vlang='es-ES';if(c==='not-allowed'||c==='service-not-allowed')blocked=true};
   try{rec.start();recOn=true;blocked=false;diag('Micrófono: escuchando');setDot()}catch(e){diag('Micrófono: toca la pantalla');setDot()}}
 
 /* ---- relé del cómplice ---- */
