@@ -21,6 +21,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 .ic i{position:relative;width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1.9rem;box-shadow:0 2px 6px #0004;transition:transform .12s}
 .ic:active i{transform:scale(.9)}
 .bd{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:#ff3b30;color:#fff;font:600 .8rem/22px -apple-system,sans-serif;text-align:center;font-style:normal}
+#home.wp #icons,#home.wp #srch,#home.wp #dock{opacity:0}
 #srch{margin:auto auto 14px;padding:7px 26px;border-radius:20px;background:#ffffff40;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:.9rem;color:#ffffffd9}
 #dock{margin:0 12px calc(env(safe-area-inset-bottom,0px) + 22px);padding:14px;border-radius:30px;background:#ffffff33;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);justify-items:center}
 #dock .ic i{width:58px;height:58px}
@@ -74,6 +75,8 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <div class="mut">Letra</div><select id="font"><option>Caveat</option><option>Reenie Beanie</option><option>Covered By Your Grace</option><option>Nanum Pen Script</option><option>Kalam</option><option>Gochi Hand</option><option>Shadows Into Light</option><option>Nothing You Could Do</option><option>Bradley Hand</option><option>Marker Felt</option><option>Noteworthy</option><option>Chalkduster</option><option>Snell Roundhand</option><option>Savoye LET</option><option>Zapfino</option><option>Papyrus</option><option>Party LET</option><option>American Typewriter</option></select>
 <div class="mut">Espera antes de escribir: <b id="delayv"></b></div><input type="range" id="delay" min="0" max="5000" step="100">
 <div class="mut">Duración de la escritura: <b id="durv"></b></div><input type="range" id="dur" min="300" max="4000" step="100">
+<div class="mut">Palabra clave de inicio (ej: pensaste en)</div><input id="kp" autocomplete="off" autocapitalize="none">
+<div class="mut">Palabra clave final (ej: cierto)</div><input id="kc" autocomplete="off" autocapitalize="none">
 <button id="play">Probar revelación</button><button class="p" id="sv">Guardar</button><button id="sb2">Volver</button>
 <div class="msg" id="sm"></div><div class="mut" id="diag">Micrófono: —</div><div class="mut" id="rl">Relé: —</div></div></section>
 
@@ -85,13 +88,13 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 (function(){
 var $=function(i){return document.getElementById(i)};
 var DEF={x:50,y:50,size:12,rot:-3,color:'#1b3a8c',font:'Caveat',delay:300,dur:1100};
-var D={photos:[],board:'',wp:'',p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
+var D={photos:[],board:'',wp:'',kw:{phrase:'',closer:''},p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
 var cfg={phrase:'pensaste en',closer:'cierto'};
 function show(id){['lock','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)})}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 function cap(s){return s.split(' ').filter(Boolean).map(function(w){return w[0].toUpperCase()+w.slice(1)}).join(' ')}
-function applyWp(){$('home').style.backgroundImage=D.wp?'url('+D.wp+')':''}
+function applyWp(){$('home').style.backgroundImage=D.wp?'url('+D.wp+')':'';$('home').classList.toggle('wp',!!D.wp)}
 function idb(m,v){return new Promise(function(res){var r=indexedDB.open('pm',1);r.onupgradeneeded=function(){r.result.createObjectStore('s')};r.onerror=function(){res(null)};r.onsuccess=function(){var st=r.result.transaction('s',m==='get'?'readonly':'readwrite').objectStore('s'),q=m==='get'?st.get('d'):st.put(v,'d');q.onsuccess=function(){res(q.result)};q.onerror=function(){res(null)}}})}
 function shrink(f,cb,mx){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var sc=Math.min(1,(mx||1000)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);cb(c.toDataURL('image/jpeg',.8))};im.src=u}
 
@@ -134,7 +137,7 @@ function diag(t){$('diag').textContent=t}
 function setDot(){$('dot').style.display=(active&&!recOn)?'block':'none'}
 function norm(t){return t.toLowerCase().replace(/[.,;:!?¿¡]/g,' ').replace(/\s+/g,' ')}
 function esc(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-function tryApply(t){if(!armed||!active)return;var m=norm(t).match(new RegExp(esc(norm(cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(cfg.closer))));if(m)setName(m[1])}
+function tryApply(t){if(!armed||!active)return;var m=norm(t).match(new RegExp(esc(norm(D.kw.phrase||cfg.phrase))+'\\s+(?:el nombre\\s+|a\\s+)?([a-záéíóúñü]+(?:\\s[a-záéíóúñü]+){0,2}?)\\s+'+esc(norm(D.kw.closer||cfg.closer))));if(m)setName(m[1])}
 function startRec(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){diag('Micrófono: voz no disponible');return}if(recOn)return;
   rec=new SR();rec.lang='es-ES';rec.continuous=true;rec.interimResults=true;
   rec.onresult=function(e){var s='';for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';diag('Micrófono: escuchando · oído: '+s.slice(-60));tryApply(s)};
@@ -161,7 +164,7 @@ function enter(key,silent){
 function lock(m){active=false;try{rec&&rec.abort()}catch(e){}if(es){es.close();es=null}$('lmsg').textContent=m||'';show('lock')}
 $('go').onclick=function(){var k=$('key').value.trim().toUpperCase();if(!k)return;$('lmsg').textContent='';enter(k)};
 function start(key){curKey=key;active=true;sha('t:'+key).then(function(h){topic='pm'+h.slice(0,20);relay()});
-  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{})}applyWp();show('home');startRec()})}
+  idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{});D.kw=Object.assign({phrase:'',closer:''},d.kw||{})}applyWp();show('home');startRec()})}
 setInterval(function(){if(active&&curKey&&document.visibilityState==='visible')check(curKey).then(function(st){if(st!=='ok'){ls('k',null);lock(MSG[st])}},function(){})},300000);
 document.addEventListener('visibilitychange',function(){if(active&&document.visibilityState==='visible')enter(curKey)});
 
@@ -174,7 +177,7 @@ $('m2').onclick=function(){$('menu').classList.remove('on');$('mi').value='';$('
 $('m3').onclick=function(){$('menu').classList.remove('on')};
 $('mok').onclick=function(){var v=$('mi').value.trim();if(v)setName(v);$('man').classList.remove('on')};
 var ctl=['x','y','size','rot','color','font','delay','dur'];
-function openSet(){show('set');$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('sm').textContent='';vals();prev(false)}
+function openSet(){show('set');$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('sm').textContent='';$('kp').value=D.kw.phrase||cfg.phrase;$('kc').value=D.kw.closer||cfg.closer;vals();prev(false)}
 function rd(){ctl.forEach(function(k){var v=$(k).value;D.p[k]=(k==='color'||k==='font')?v:parseFloat(v)})}
 function vals(){var g=function(k){return parseFloat($(k).value)};$('xv').textContent=g('x')+' %';$('yv').textContent=g('y')+' %';$('sizev').textContent=g('size');$('rotv').textContent=g('rot')+'°';$('delayv').textContent=g('delay')+' ms ('+(g('delay')/1000).toFixed(1)+' s)';$('durv').textContent=g('dur')+' ms ('+(g('dur')/1000).toFixed(1)+' s)'}
 function prev(a){var el=$('snm'),t=$('tn').value||'Ricardo';if(a)reveal(el,D.p,t);else{clearTimeout(rt);build(el,t);styleNm(el,D.p);el.classList.add('show')}}
@@ -182,7 +185,7 @@ ctl.concat(['tn']).forEach(function(k){$(k).addEventListener('input',function(){
 $('sbw').addEventListener('click',function(e){var r=this.getBoundingClientRect();D.p.x=Math.round((e.clientX-r.left)/r.width*100);D.p.y=Math.round((e.clientY-r.top)/r.height*100);$('x').value=D.p.x;$('y').value=D.p.y;vals();prev(false)});
 $('play').onclick=function(){rd();prev(true)};
 $('sb2').onclick=function(){show('home')};
-$('sv').onclick=function(){rd();idb('set',D).then(function(){$('sm').style.color='#8e8e93';$('sm').textContent='Guardado ✓'})};
+$('sv').onclick=function(){rd();D.kw.phrase=$('kp').value.trim().toLowerCase();D.kw.closer=$('kc').value.trim().toLowerCase();idb('set',D).then(function(){$('sm').style.color='#8e8e93';$('sm').textContent='Guardado ✓'})};
 $('fbd').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,function(u){D.board=u;$('simg').src=u;prev(false)})});
 $('fph').addEventListener('change',function(){Array.from(this.files).forEach(function(f){shrink(f,function(u){D.photos.push(u);$('sm').textContent=D.photos.length+' fotos de relleno (guarda)'})})});
 $('clr').onclick=function(){D.photos=[];$('sm').textContent='Fotos quitadas (guarda)'};
