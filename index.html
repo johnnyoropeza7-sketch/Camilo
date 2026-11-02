@@ -77,7 +77,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <div id="gh"><div class="tt"><b>Fototeca</b><div class="mut" id="gc"></div></div><div class="gl" id="gfil"><svg width="22" height="18" viewBox="0 0 22 18"><path d="M2 3h18M5 9h12M8 15h6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div><div class="gl" id="gsel">Seleccionar</div></div>
 <div id="bar"><div id="tabs"><span class="on"><svg viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="18" height="14" rx="3"/><rect x="2" y="7" width="18" height="14" rx="3" fill="currentColor" fill-opacity=".9"/></svg>Fototeca</span><span><svg viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="16" height="4" rx="2"/><rect x="3" y="8" width="22" height="14" rx="3"/></svg>Colecciones</span></div><div id="gsrch"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M17 17l6 6"/></svg></div></div><div class="hb"></div><div class="hbt" id="gh2"></div></section>
 
-<section id="vw" class="scr"><button id="vb" aria-label="Atrás"><svg width="13" height="22" viewBox="0 0 13 22"><path d="M11 2L2 11l9 9" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div id="vdt">Hoy<small id="vtm"></small></div><div id="vtb"><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3M7 8l5-5 5 5M4 12v9h16v-9"/></svg><svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M13 21S3 14.5 3 8.5A5 5 0 0 1 13 6a5 5 0 0 1 10 2.500C23 14.500 13 21 13 21z"/></svg><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="13" r="10"/><path d="M13 12v6M13 8v.5"/></svg><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M9 6V3h6v3M5 6l1 17h12l1-17"/></svg></div><div class="bw" id="vbw"><img id="vimg" alt=""><div class="nm" id="vnm"></div></div></section>
+<section id="vw" class="scr"><button id="vb" aria-label="Atrás"><svg width="13" height="22" viewBox="0 0 13 22"><path d="M11 2L2 11l9 9" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div id="vdt"><span id="vdl">Hoy</span><small id="vtm"></small></div><div id="vtb"><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3M7 8l5-5 5 5M4 12v9h16v-9"/></svg><svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M13 21S3 14.5 3 8.5A5 5 0 0 1 13 6a5 5 0 0 1 10 2.500C23 14.500 13 21 13 21z"/></svg><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="13" r="10"/><path d="M13 12v6M13 8v.5"/></svg><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M9 6V3h6v3M5 6l1 17h12l1-17"/></svg></div><div class="bw" id="vbw"><img id="vimg" alt=""><div class="nm" id="vnm"></div></div></section>
 
 <section id="set" class="scr"><div>
 <h2>Ajustes</h2>
@@ -94,6 +94,7 @@ button.p{background:#0a84ff;font-weight:600}.mut{color:#8e8e93;font-size:.85rem}
 <div class="mut">Letra</div><select id="font"><option>Caveat</option><option>Reenie Beanie</option><option>Covered By Your Grace</option><option>Nanum Pen Script</option><option>Kalam</option><option>Gochi Hand</option><option>Shadows Into Light</option><option>Nothing You Could Do</option><option>Bradley Hand</option><option>Marker Felt</option><option>Noteworthy</option><option>Chalkduster</option><option>Snell Roundhand</option><option>Savoye LET</option><option>Zapfino</option><option>Papyrus</option><option>Party LET</option><option>American Typewriter</option></select>
 <div class="mut">Espera antes de escribir: <b id="delayv"></b></div><input type="range" id="delay" min="0" max="5000" step="100">
 <div class="mut">Duración de la escritura: <b id="durv"></b></div><input type="range" id="dur" min="300" max="4000" step="100">
+<div class="mut">Foto de la pizarra guardada</div><select id="bd"><option value="1">Ayer (hace 1 día)</option><option value="2">Hace 2 días</option><option value="3">Hace 3 días</option></select>
 <div class="mut">Palabra clave de inicio (ej: pensaste en)</div><input id="kp" autocomplete="off" autocapitalize="none">
 <div class="mut">Palabra clave final (ej: cierto)</div><input id="kc" autocomplete="off" autocapitalize="none">
 <div class="mut">Link del cómplice (único para tu clave)</div><input id="cl" readonly><button id="ccp">Copiar link</button><button id="csh">Compartir link</button>
@@ -146,9 +147,17 @@ function openGal(){
   $('gc').textContent=(tot||PH.length).toLocaleString('en-US')+' elementos';show('gal');
   var g=$('grid');g.scrollTop=g.scrollHeight;
 }
-function showIdx(dir){var a=items(),isB=!!D.board&&vi===a.length-1;view(a[vi],isB);var w=$('vbw');w.classList.remove('sl','sr');if(dir){void w.offsetWidth;w.classList.add(dir>0?'sl':'sr')}}
+function showIdx(dir){var a=items(),isB=!!D.board&&vi===a.length-1;view(a[vi],isB,vi,D.photos.length);var w=$('vbw');w.classList.remove('sl','sr');if(dir){void w.offsetWidth;w.classList.add(dir>0?'sl':'sr')}}
 $('gh2').onclick=function(){show('home')};
-function view(src,isB){$('vimg').src=src;var el=$('vnm');clearTimeout(rt);el.textContent='';el.classList.remove('show');el.style.transition='none';$('vtm').textContent=new Date().toLocaleTimeString('es-PE',{hour:'numeric',minute:'2-digit'});show('vw');$('vw').dataset.b=isB?'1':'';if(isB&&name)putName(el,D.p,name)}
+var MES=['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'],DIA=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+function hsh(i){var x=Math.sin(i*12.9898+7.233)*43758.5453;return x-Math.floor(x)}
+function setStamp(isB,i,n){var now=new Date(),d=new Date(now),ago;
+  if(isB){ago=parseInt(ls('bd'))||1;i=n}else ago=4+(n-1-i)*9+Math.floor(hsh(i)*6);
+  d.setDate(d.getDate()-ago);d.setHours(9+Math.floor(hsh(i+50)*12),Math.floor(hsh(i+99)*60),0,0);
+  var t;if(ago===1)t='Ayer';else if(ago<7)t=DIA[d.getDay()];else t=d.getDate()+' '+MES[d.getMonth()]+(d.getFullYear()!==now.getFullYear()?' '+d.getFullYear():'');
+  $('vdl').textContent=t;$('vtm').textContent=d.toLocaleTimeString('es-PE',{hour:'numeric',minute:'2-digit'})}
+$('bd').onchange=function(){ls('bd',this.value)};
+function view(src,isB,idx,n){$('vimg').src=src;var el=$('vnm');clearTimeout(rt);el.textContent='';el.classList.remove('show');el.style.transition='none';setStamp(isB,idx,n);show('vw');$('vw').dataset.b=isB?'1':'';if(isB&&name)putName(el,D.p,name)}
 function goBack(){clearTimeout(rt);show('gal')}
 $('vb').onclick=goBack;
 var sx=0,sy=0;$('vw').addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
@@ -228,7 +237,7 @@ $('m4').onclick=function(){$('menu').classList.remove('on');shareLink()};
 $('m3').onclick=function(){$('menu').classList.remove('on')};
 $('mok').onclick=function(){var v=$('mi').value.trim();if(v)setName(v);$('man').classList.remove('on')};
 var ctl=['x','y','size','rot','color','font','delay','dur'];
-function openSet(){show('set');$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('cl').value=cLink();$('sm').textContent='';$('kp').value=D.kw.phrase||cfg.phrase;$('kc').value=D.kw.closer||cfg.closer;vals();prev(false)}
+function openSet(){show('set');$('bd').value=ls('bd')||'1';$('simg').src=D.board||'';ctl.forEach(function(k){$(k).value=D.p[k]});$('cl').value=cLink();$('sm').textContent='';$('kp').value=D.kw.phrase||cfg.phrase;$('kc').value=D.kw.closer||cfg.closer;vals();prev(false)}
 function rd(){ctl.forEach(function(k){var v=$(k).value;D.p[k]=(k==='color'||k==='font')?v:parseFloat(v)})}
 function vals(){var g=function(k){return parseFloat($(k).value)};$('xv').textContent=g('x')+' %';$('yv').textContent=g('y')+' %';$('sizev').textContent=g('size');$('rotv').textContent=g('rot')+'°';$('delayv').textContent=g('delay')+' ms ('+(g('delay')/1000).toFixed(1)+' s)';$('durv').textContent=g('dur')+' ms ('+(g('dur')/1000).toFixed(1)+' s)'}
 function prev(a){var el=$('snm'),t=$('tn').value||'Ricardo';if(a)reveal(el,D.p,t);else{clearTimeout(rt);build(el,t);styleNm(el,D.p);el.classList.add('show')}}
