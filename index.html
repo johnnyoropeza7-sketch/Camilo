@@ -77,7 +77,7 @@ textarea{font:inherit;border:0;border-radius:12px;padding:12px;background:#1c1c1
 <section id="lock" class="scr on"><img class="lg" src="icon-192.png" alt="Mago Camilo" width="120" height="120"><h2>Mago Camilo</h2>
 <input id="key" placeholder="CLAVE" autocapitalize="characters" autocomplete="off" maxlength="12">
 <button class="p" id="go">Entrar</button><div class="msg" id="lmsg"></div>
-<div class="mut">Código de este dispositivo: <b id="dc"></b></div><div class="cred">© Creación y derechos reservados por el <b>Mago Camilo</b> el Mentalista</div></section>
+<div class="mut">Código de este dispositivo: <b id="dc"></b></div><button id="admb" style="width:auto;margin:14px auto 0;padding:8px 18px;font-size:.8rem;background:#2c2c2e;color:#8e8e93">⚙︎ Administrador</button><div class="cred">© Creación y derechos reservados por el <b>Mago Camilo</b> el Mentalista</div></section>
 
 <section id="mode" class="scr" style="align-items:center;justify-content:center;padding:28px;text-align:center"><div style="width:100%;max-width:340px"><h2>¿Cómo vas a presentar?</h2><button class="p" id="mA">🎤 Con audio</button><button class="p" id="mC">👥 Con cómplice</button><div class="mut" style="margin-top:10px">Audio: la app escucha la palabra clave.<br>Cómplice: recibe el nombre desde su link.</div><div class="cred">© Creación y derechos reservados por el <b>Mago Camilo</b> el Mentalista</div></div></section>
 
@@ -395,6 +395,7 @@ $('ash').onclick=function(){var t=$('at').value;if(navigator.share)navigator.sha
 $('akj').onclick=function(){if(KJ)admCopy(JSON.stringify(KJ,null,1))};
 $('gsv').onclick=function(){ls('gr',$('gr').value.trim());ls('gbr',$('gb').value.trim()||'main');ls('gtk',$('gt').value.trim());am('Guardado ✓',true);admLoad()};
 $('apc').onclick=function(){var v=$('ap').value.trim().toUpperCase();if(v.length<6){am('Mínimo 6 caracteres');return}sha('adm:'+v).then(function(h){ls('admh',h);$('ap').value='';am('Clave de administrador cambiada ✓',true)})};
+$('admb').onclick=function(){var p=window.prompt('Clave de administrador');if(p)admCheck(p.trim().toUpperCase()).then(function(ok){if(ok)admOpen('lock');else $('lmsg').textContent='Clave de administrador incorrecta'})};
 $('aex').onclick=function(){KJ=null;if(admBack==='lock')show('lock');else openSet()};
 var tapN=0,tapT=0;document.querySelector('#set h2').addEventListener('click',function(){var n=Date.now();tapN=(n-tapT<800)?tapN+1:1;tapT=n;if(tapN>=5){tapN=0;var p=window.prompt('Administrador');if(p)admCheck(p.trim().toUpperCase()).then(function(ok){if(ok)admOpen('set')})}});
 
