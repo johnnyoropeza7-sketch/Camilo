@@ -66,9 +66,6 @@ textarea{font:inherit;border:0;border-radius:12px;padding:12px;background:#1c1c1
 #gdot{position:fixed;top:max(6px,calc(env(safe-area-inset-top,0px)/2 - 5px));right:14px;width:9px;height:9px;border-radius:50%;background:#30d158;box-shadow:0 0 6px #30d158;opacity:0;transition:opacity .3s;z-index:60;pointer-events:none}
 #cl{-webkit-user-select:text;user-select:text;font-size:.8rem}
 #dot{position:fixed;top:calc(env(safe-area-inset-top,0px) + 6px);right:8px;width:5px;height:5px;border-radius:50%;background:#888;opacity:.5;display:none;z-index:45}
-#adm{background:#000;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 40px;align-items:center}#adm>div{width:100%;max-width:360px}
-#adm .sel{-webkit-user-select:text;user-select:text}#adm textarea{min-height:110px;font-size:.85rem}
-.ur{background:#1c1c1e;border-radius:12px;padding:10px 12px;margin:8px 0}.ur b{display:block}.ur .mut{margin:2px 0}.ur .bt{display:flex;gap:6px}.ur .bt button{margin:6px 0 0;padding:8px;font-size:.8rem}
 </style></head><body>
 
 <svg width="0" height="0" style="position:absolute"><defs><filter id="fpen" x="-5%" y="-20%" width="110%" height="140%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="3" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 0 0 0 1.85" result="g"/><feComposite in="SourceGraphic" in2="g" operator="in" result="s"/><feGaussianBlur in="s" stdDeviation=".35"/></filter><filter id="fmar" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.2" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation=".3"/></filter></defs></svg>
@@ -86,29 +83,6 @@ textarea{font:inherit;border:0;border-radius:12px;padding:12px;background:#1c1c1
 <div id="bar"><div id="tabs"><span class="on"><svg viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="18" height="14" rx="3"/><rect x="2" y="7" width="18" height="14" rx="3" fill="currentColor" fill-opacity=".9"/></svg>Fototeca</span><span><svg viewBox="0 0 28 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="16" height="4" rx="2"/><rect x="3" y="8" width="22" height="14" rx="3"/></svg>Colecciones</span></div><div id="gsrch"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M17 17l6 6"/></svg></div></div><div class="hb"></div><div class="hbt" id="gh2"></div></section>
 
 <section id="vw" class="scr"><button id="vb" aria-label="Atrás"><svg width="13" height="22" viewBox="0 0 13 22"><path d="M11 2L2 11l9 9" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div id="vdt"><span id="vdl">Hoy</span><small id="vtm"></small></div><div id="vtb"><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3M7 8l5-5 5 5M4 12v9h16v-9"/></svg><svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M13 21S3 14.5 3 8.5A5 5 0 0 1 13 6a5 5 0 0 1 10 2.500C23 14.500 13 21 13 21z"/></svg><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="13" r="10"/><path d="M13 12v6M13 8v.5"/></svg><svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M9 6V3h6v3M5 6l1 17h12l1-17"/></svg></div><div class="bw" id="vbw"><img id="vimg" alt=""><video id="vvid" playsinline webkit-playsinline preload="auto" style="display:none"></video><div class="nm" id="vnm"></div></div></section>
-
-<section id="adm" class="scr"><div>
-<h2>Administrador</h2>
-<div class="mut">Crear usuario</div>
-<input id="an" placeholder="Nombre del usuario" autocomplete="off">
-<input id="ad" placeholder="Código del dispositivo (opcional)" autocomplete="off" autocapitalize="characters" maxlength="12">
-<button class="p" id="ac">Crear usuario y clave</button>
-<div class="mut" style="margin-top:14px">O pega una clave que ya tengas</div>
-<input id="pn" placeholder="Usuario" autocomplete="off"><input id="pk" placeholder="Clave" autocomplete="off" autocapitalize="characters" maxlength="12"><input id="pd" placeholder="Código del dispositivo (opcional)" autocomplete="off" autocapitalize="characters" maxlength="12">
-<button id="pp">Publicar y preparar para enviar</button>
-<div class="msg" id="am"></div>
-<div id="ar" style="display:none"><div class="mut">Para enviar (toca para copiar o compartir)</div><textarea id="at" class="sel" readonly></textarea><button id="acp">Copiar</button><button id="ash">Compartir</button></div>
-<div class="mut" style="margin-top:18px">Usuarios</div><div id="al"></div>
-<details id="agd" style="margin-top:16px"><summary class="mut">Publicación en GitHub</summary>
-<div class="mut">Repositorio (usuario/repositorio)</div><input id="gr" autocomplete="off" autocapitalize="none" placeholder="tuusuario/turepo">
-<div class="mut">Rama</div><input id="gb" autocomplete="off" autocapitalize="none" placeholder="main">
-<div class="mut">Token de GitHub (solo se guarda en este dispositivo)</div><input id="gt" type="password" autocomplete="off" placeholder="github_pat_...">
-<button id="gsv">Guardar</button>
-<div class="mut" style="margin-top:10px">Sin token: copia el keys.json y pégalo tú en GitHub</div><button id="akj">Copiar keys.json completo</button>
-<div class="mut" style="margin-top:10px">Cambiar clave de administrador (este dispositivo)</div><input id="ap" autocomplete="off" autocapitalize="characters" maxlength="12" placeholder="Nueva clave (6-12 caracteres)"><button id="apc">Cambiar</button>
-</details>
-<button id="aex" style="margin-top:18px">Salir</button>
-</div></section>
 
 <section id="set" class="scr"><div>
 <h2>Ajustes</h2>
@@ -151,7 +125,7 @@ var $=function(i){return document.getElementById(i)};
 var DEF={x:50,y:50,size:12,rot:-3,color:'#1b3a8c',font:'Caveat',delay:300,dur:1100,tool:'marker',int:100};
 var D={photos:[],board:'',wp:'',kw:{phrase:'',closer:''},p:Object.assign({},DEF)},name='',armed=true,active=false,rec=null,recOn=false,blocked=false,curKey='',topic='',es=null;
 var mode='',vlang='es-MX';var cfg={phrase:'pensaste en',closer:'cierto'};
-function show(id){['lock','mode','home','gal','vw','set','adm'].forEach(function(s){$(s).classList.toggle('on',s===id)});updGdot()}
+function show(id){['lock','mode','home','gal','vw','set'].forEach(function(s){$(s).classList.toggle('on',s===id)});updGdot()}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 function cap(s){return s.split(' ').filter(Boolean).map(function(w){return w[0].toUpperCase()+w.slice(1)}).join(' ')}
@@ -284,7 +258,7 @@ function enter(key,silent){
   },function(){var t=+ls('ok')||0;if(ls('k')===key&&Date.now()-t<3*864e5){if(!active)start(key)}else lock('Sin conexión')})
 }
 function lock(m){active=false;try{rec&&rec.abort()}catch(e){}if(es){es.close();es=null}$('lmsg').textContent=m||'';show('lock')}
-$('go').onclick=function(){var k=$('key').value.trim().toUpperCase();if(!k)return;$('lmsg').textContent='';admCheck(k).then(function(ok){if(ok){$('key').value='';admOpen('lock')}else enter(k)})};
+$('go').onclick=function(){var k=$('key').value.trim().toUpperCase();if(!k)return;$('lmsg').textContent='';enter(k)};
 function start(key){curKey=key;active=true;sha('t:'+key).then(function(h){topic='pm'+h.slice(0,20);relay()});
   idb('get').then(function(d){if(d){D.photos=d.photos||[];D.board=d.board||'';D.video=d.video||null;D.vposter=d.vposter||(d.video?d.board:'');D.useVideo=d.useVideo!==false;D.fb=d.fb!==false;D.vshow=d.vshow||0;D.vref=d.vref||'';D.fx=d.fx||'text';D.extra=d.extra||'';D.vdur=d.vdur||0;D.wp=d.wp||'';D.p=Object.assign({},DEF,d.p||{});if(D.p.tool==='pencil')D.p.tool='hb';D.kw=Object.assign({phrase:'',closer:''},d.kw||{})}applyWp();loadBd();fxLbl();show('mode')})}
 setInterval(function(){if(active&&curKey&&document.visibilityState==='visible')check(curKey).then(function(st){if(st!=='ok'){ls('k',null);lock(MSG[st])}},function(){})},300000);
@@ -345,56 +319,6 @@ $('cvd').onclick=function(){D.video=null;D.vposter='';D.vref='';D.vshow=0;setVs(
 $('fph').addEventListener('change',function(){Array.from(this.files).forEach(function(f){shrink(f,function(u){D.photos.push(u);$('sm').textContent=D.photos.length+' fotos de relleno (guarda)'})})});
 $('clr').onclick=function(){D.photos=[];$('sm').textContent='Fotos quitadas (guarda)'};
 $('fwp').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,function(u){D.wp=u;applyWp();$('sm').textContent='Fondo cambiado (guarda)'},1600)});$('cwp').onclick=function(){D.wp='';applyWp();$('sm').textContent='Fondo quitado (guarda)'};
-
-
-/* ---- administrador oculto: crea usuarios y claves ---- */
-var ADMH='e7dc6c798e5ccf2857fcc033afbef43c4118054e0c22645e828914cdbc097eb5',admBack='lock',KJ=null,KSHA='';
-function admHash(){return ls('admh')||ADMH}
-function admCheck(pw){return sha('adm:'+pw).then(function(h){return h===admHash()})}
-function admOpen(from){admBack=from;show('adm');$('gr').value=ls('gr')||'';$('gb').value=ls('gbr')||'main';$('gt').value=ls('gtk')||'';$('am').textContent='';$('ar').style.display='none';$('agd').open=!(ls('gr')&&ls('gtk'));admLoad()}
-function am(t,ok){var e=$('am');e.style.color=ok?'#30d158':'#ff453a';e.textContent=t}
-function gh(path,opt){var r=ls('gr'),t=ls('gtk');if(!r||!t)return Promise.reject(new Error('Falta repositorio o token'));opt=opt||{};opt.headers={'Authorization':'Bearer '+t,'Accept':'application/vnd.github+json'};return fetch('https://api.github.com/repos/'+r+'/contents/'+path+(opt.method==='PUT'?'':'?ref='+encodeURIComponent(ls('gbr')||'main')+'&t='+Date.now()),opt).then(function(x){return x.json().then(function(j){if(!x.ok)throw new Error(j.message||('Error '+x.status));return j})})}
-function b64d(b){var bin=atob(b.replace(/\s/g,'')),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
-function b64e(t){var u=new TextEncoder().encode(t),b='';for(var i=0;i<u.length;i++)b+=String.fromCharCode(u[i]);return btoa(b)}
-function admLoad(){
-  if(ls('gr')&&ls('gtk')){gh('keys.json').then(function(f){KSHA=f.sha;KJ=JSON.parse(b64d(f.content));if(!KJ.keys)KJ.keys=[];admList()},function(e){am('GitHub: '+e.message+' (se usa la copia publicada)');admLoadPub()})}
-  else admLoadPub()}
-function admLoadPub(){fetch('keys.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){KJ=j;if(!KJ.keys)KJ.keys=[];admList()},function(){KJ={keys:[]};admList()})}
-function admUsers(){try{return JSON.parse(ls('admu')||'{}')}catch(e){return {}}}
-function admList(){var L=$('al'),U=admUsers();L.innerHTML='';if(!KJ)return;
-  KJ.keys.forEach(function(k,i){var u=U[k.h]||{},d=document.createElement('div');d.className='ur';
-    d.innerHTML='<b></b><div class="mut"></div><div class="bt"><button data-a="t"></button><button data-a="d">Dispositivo</button><button data-a="c">Copiar</button><button data-a="x">Borrar</button></div>';
-    d.querySelector('b').textContent=(k.n||u.n||('Usuario '+k.h.slice(0,6)))+(k.on===false?' (desactivado)':'');
-    d.querySelector('.mut').textContent='Dispositivo: '+(k.dev||'cualquiera')+(u.key?' · Clave: '+u.key:' · clave no guardada aquí');
-    d.querySelector('[data-a=t]').textContent=k.on===false?'Activar':'Desactivar';
-    if(!u.key)d.querySelector('[data-a=c]').style.display='none';
-    d.onclick=function(e){var a=e.target.getAttribute&&e.target.getAttribute('data-a');if(!a)return;
-      if(a==='t'){k.on=(k.on===false);admSave('Usuario actualizado')}
-      else if(a==='d'){var v=window.prompt('Código del dispositivo (vacío = cualquiera)',k.dev||'');if(v===null)return;v=v.trim().toUpperCase();if(v)k.dev=v;else delete k.dev;admSave('Dispositivo actualizado')}
-      else if(a==='c'){admShow(k.n||u.n||'',u.key,k.dev)}
-      else if(a==='x'){if(window.confirm('¿Borrar este usuario?')){KJ.keys.splice(i,1);admSave('Usuario borrado')}}};
-    L.appendChild(d)});
-  if(!KJ.keys.length)L.innerHTML='<div class="mut">Aún no hay usuarios</div>'}
-function admSave(okMsg){admList();
-  if(!(ls('gr')&&ls('gtk'))){$('agd').open=true;am('NO publicado: falta configurar GitHub abajo (repositorio y token). Sin eso la clave no funciona.');return}
-  am('Publicando…',true);
-  var body={message:'keys',content:b64e(JSON.stringify(KJ,null,1)),sha:KSHA,branch:ls('gbr')||'main'};
-  gh('keys.json',{method:'PUT',body:JSON.stringify(body)}).then(function(r){KSHA=r.content.sha;am(okMsg+' ✓ Publicado (tarda ~1 min en activarse)',true)},function(e){am('No se publicó: '+e.message)})}
-function admShow(n,key,dev){var link=new URL('./',location.href).href.split('?')[0];
-  $('at').value='Hola'+(n?' '+n:'')+'\nUsuario: '+n+'\nClave: '+key+'\nApp: '+link+(dev?'':'\n(Al abrirla verás un código de dispositivo, envíamelo)');$('ar').style.display='block'}
-function newKey(){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=crypto.getRandomValues(new Uint8Array(8)),k='';for(var i=0;i<8;i++)k+=a[b[i]%a.length];return k}
-$('ac').onclick=function(){var n=$('an').value.trim(),d=$('ad').value.trim().toUpperCase();if(!n){am('Escribe el nombre del usuario');return}if(!KJ){am('Aún cargando, intenta de nuevo');return}
-  var key=newKey();sha(key).then(function(h){var e={h:h,n:n,on:true};if(d)e.dev=d;KJ.keys.push(e);var U=admUsers();U[h]={n:n,key:key};ls('admu',JSON.stringify(U));admShow(n,key,d);$('an').value='';$('ad').value='';admSave('Usuario creado')})};
-$('pp').onclick=function(){var n=$('pn').value.trim(),key=$('pk').value.trim().toUpperCase(),d=$('pd').value.trim().toUpperCase();if(!n||!key){am('Escribe usuario y clave');return}if(!KJ){am('Aún cargando, intenta de nuevo');return}
-  sha(key).then(function(h){var e=KJ.keys.find(function(k){return k.h===h});if(e){e.n=n;e.on=true;if(d)e.dev=d;else delete e.dev}else{e={h:h,n:n,on:true};if(d)e.dev=d;KJ.keys.push(e)}var U=admUsers();U[h]={n:n,key:key};ls('admu',JSON.stringify(U));admShow(n,key,d);$('pn').value='';$('pk').value='';$('pd').value='';admSave('Usuario publicado')})};
-function admCopy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){am('Copiado ✓',true)},function(){window.prompt('Copia',t)});else window.prompt('Copia',t)}
-$('acp').onclick=function(){admCopy($('at').value)};
-$('ash').onclick=function(){var t=$('at').value;if(navigator.share)navigator.share({text:t}).catch(function(){});else admCopy(t)};
-$('akj').onclick=function(){if(KJ)admCopy(JSON.stringify(KJ,null,1))};
-$('gsv').onclick=function(){ls('gr',$('gr').value.trim());ls('gbr',$('gb').value.trim()||'main');ls('gtk',$('gt').value.trim());am('Guardado ✓',true);admLoad()};
-$('apc').onclick=function(){var v=$('ap').value.trim().toUpperCase();if(v.length<6){am('Mínimo 6 caracteres');return}sha('adm:'+v).then(function(h){ls('admh',h);$('ap').value='';am('Clave de administrador cambiada ✓',true)})};
-$('aex').onclick=function(){KJ=null;if(admBack==='lock')show('lock');else openSet()};
-var tapN=0,tapT=0;document.querySelector('#set h2').addEventListener('click',function(){var n=Date.now();tapN=(n-tapT<800)?tapN+1:1;tapT=n;if(tapN>=5){tapN=0;var p=window.prompt('Administrador');if(p)admCheck(p.trim().toUpperCase()).then(function(ok){if(ok)admOpen('set')})}});
 
 try{['Caveat','Reenie Beanie','Covered By Your Grace','Nanum Pen Script','Kalam','Gochi Hand','Shadows Into Light','Nothing You Could Do'].forEach(function(f){document.fonts.load('40px "'+f+'"')})}catch(e){}
 var k=ls('k');if(k)enter(k);
