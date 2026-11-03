@@ -93,10 +93,13 @@ textarea{font:inherit;border:0;border-radius:12px;padding:12px;background:#1c1c1
 <input id="an" placeholder="Nombre del usuario" autocomplete="off">
 <input id="ad" placeholder="Código del dispositivo (opcional)" autocomplete="off" autocapitalize="characters" maxlength="12">
 <button class="p" id="ac">Crear usuario y clave</button>
+<div class="mut" style="margin-top:14px">O pega una clave que ya tengas</div>
+<input id="pn" placeholder="Usuario" autocomplete="off"><input id="pk" placeholder="Clave" autocomplete="off" autocapitalize="characters" maxlength="12"><input id="pd" placeholder="Código del dispositivo (opcional)" autocomplete="off" autocapitalize="characters" maxlength="12">
+<button id="pp">Publicar y preparar para enviar</button>
 <div class="msg" id="am"></div>
 <div id="ar" style="display:none"><div class="mut">Para enviar (toca para copiar o compartir)</div><textarea id="at" class="sel" readonly></textarea><button id="acp">Copiar</button><button id="ash">Compartir</button></div>
 <div class="mut" style="margin-top:18px">Usuarios</div><div id="al"></div>
-<details style="margin-top:16px"><summary class="mut">Publicación en GitHub</summary>
+<details id="agd" style="margin-top:16px"><summary class="mut">Publicación en GitHub</summary>
 <div class="mut">Repositorio (usuario/repositorio)</div><input id="gr" autocomplete="off" autocapitalize="none" placeholder="tuusuario/turepo">
 <div class="mut">Rama</div><input id="gb" autocomplete="off" autocapitalize="none" placeholder="main">
 <div class="mut">Token de GitHub (solo se guarda en este dispositivo)</div><input id="gt" type="password" autocomplete="off" placeholder="github_pat_...">
@@ -348,7 +351,7 @@ $('fwp').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,
 var ADMH='e7dc6c798e5ccf2857fcc033afbef43c4118054e0c22645e828914cdbc097eb5',admBack='lock',KJ=null,KSHA='';
 function admHash(){return ls('admh')||ADMH}
 function admCheck(pw){return sha('adm:'+pw).then(function(h){return h===admHash()})}
-function admOpen(from){admBack=from;show('adm');$('gr').value=ls('gr')||'';$('gb').value=ls('gbr')||'main';$('gt').value=ls('gtk')||'';$('am').textContent='';$('ar').style.display='none';admLoad()}
+function admOpen(from){admBack=from;show('adm');$('gr').value=ls('gr')||'';$('gb').value=ls('gbr')||'main';$('gt').value=ls('gtk')||'';$('am').textContent='';$('ar').style.display='none';$('agd').open=!(ls('gr')&&ls('gtk'));admLoad()}
 function am(t,ok){var e=$('am');e.style.color=ok?'#30d158':'#ff453a';e.textContent=t}
 function gh(path,opt){var r=ls('gr'),t=ls('gtk');if(!r||!t)return Promise.reject(new Error('Falta repositorio o token'));opt=opt||{};opt.headers={'Authorization':'Bearer '+t,'Accept':'application/vnd.github+json'};return fetch('https://api.github.com/repos/'+r+'/contents/'+path+(opt.method==='PUT'?'':'?ref='+encodeURIComponent(ls('gbr')||'main')+'&t='+Date.now()),opt).then(function(x){return x.json().then(function(j){if(!x.ok)throw new Error(j.message||('Error '+x.status));return j})})}
 function b64d(b){var bin=atob(b.replace(/\s/g,'')),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
@@ -373,7 +376,7 @@ function admList(){var L=$('al'),U=admUsers();L.innerHTML='';if(!KJ)return;
     L.appendChild(d)});
   if(!KJ.keys.length)L.innerHTML='<div class="mut">Aún no hay usuarios</div>'}
 function admSave(okMsg){admList();
-  if(!(ls('gr')&&ls('gtk'))){am(okMsg+'. Copia el keys.json y súbelo a GitHub para que cuente.',true);return}
+  if(!(ls('gr')&&ls('gtk'))){$('agd').open=true;am('NO publicado: falta configurar GitHub abajo (repositorio y token). Sin eso la clave no funciona.');return}
   am('Publicando…',true);
   var body={message:'keys',content:b64e(JSON.stringify(KJ,null,1)),sha:KSHA,branch:ls('gbr')||'main'};
   gh('keys.json',{method:'PUT',body:JSON.stringify(body)}).then(function(r){KSHA=r.content.sha;am(okMsg+' ✓ Publicado (tarda ~1 min en activarse)',true)},function(e){am('No se publicó: '+e.message)})}
@@ -382,6 +385,8 @@ function admShow(n,key,dev){var link=new URL('./',location.href).href.split('?')
 function newKey(){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=crypto.getRandomValues(new Uint8Array(8)),k='';for(var i=0;i<8;i++)k+=a[b[i]%a.length];return k}
 $('ac').onclick=function(){var n=$('an').value.trim(),d=$('ad').value.trim().toUpperCase();if(!n){am('Escribe el nombre del usuario');return}if(!KJ){am('Aún cargando, intenta de nuevo');return}
   var key=newKey();sha(key).then(function(h){var e={h:h,n:n,on:true};if(d)e.dev=d;KJ.keys.push(e);var U=admUsers();U[h]={n:n,key:key};ls('admu',JSON.stringify(U));admShow(n,key,d);$('an').value='';$('ad').value='';admSave('Usuario creado')})};
+$('pp').onclick=function(){var n=$('pn').value.trim(),key=$('pk').value.trim().toUpperCase(),d=$('pd').value.trim().toUpperCase();if(!n||!key){am('Escribe usuario y clave');return}if(!KJ){am('Aún cargando, intenta de nuevo');return}
+  sha(key).then(function(h){var e=KJ.keys.find(function(k){return k.h===h});if(e){e.n=n;e.on=true;if(d)e.dev=d;else delete e.dev}else{e={h:h,n:n,on:true};if(d)e.dev=d;KJ.keys.push(e)}var U=admUsers();U[h]={n:n,key:key};ls('admu',JSON.stringify(U));admShow(n,key,d);$('pn').value='';$('pk').value='';$('pd').value='';admSave('Usuario publicado')})};
 function admCopy(t){if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){am('Copiado ✓',true)},function(){window.prompt('Copia',t)});else window.prompt('Copia',t)}
 $('acp').onclick=function(){admCopy($('at').value)};
 $('ash').onclick=function(){var t=$('at').value;if(navigator.share)navigator.share({text:t}).catch(function(){});else admCopy(t)};
