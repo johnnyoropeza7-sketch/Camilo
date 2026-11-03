@@ -396,7 +396,6 @@ $('akj').onclick=function(){if(KJ)admCopy(JSON.stringify(KJ,null,1))};
 $('gsv').onclick=function(){ls('gr',$('gr').value.trim());ls('gbr',$('gb').value.trim()||'main');ls('gtk',$('gt').value.trim());am('Guardado ✓',true);admLoad()};
 $('apc').onclick=function(){var v=$('ap').value.trim().toUpperCase();if(v.length<6){am('Mínimo 6 caracteres');return}sha('adm:'+v).then(function(h){ls('admh',h);$('ap').value='';am('Clave de administrador cambiada ✓',true)})};
 $('aex').onclick=function(){KJ=null;if(admBack==='lock')show('lock');else openSet()};
-var tapLN=0,tapLT=0;document.querySelector('#lock h2').addEventListener('click',function(){var n=Date.now();tapLN=(n-tapLT<800)?tapLN+1:1;tapLT=n;if(tapLN>=5){tapLN=0;var p=window.prompt('Administrador');if(p)admCheck(p.trim().toUpperCase()).then(function(ok){if(ok)admOpen('lock')})}});
 var tapN=0,tapT=0;document.querySelector('#set h2').addEventListener('click',function(){var n=Date.now();tapN=(n-tapT<800)?tapN+1:1;tapT=n;if(tapN>=5){tapN=0;var p=window.prompt('Administrador');if(p)admCheck(p.trim().toUpperCase()).then(function(ok){if(ok)admOpen('set')})}});
 
 try{['Caveat','Reenie Beanie','Covered By Your Grace','Nanum Pen Script','Kalam','Gochi Hand','Shadows Into Light','Nothing You Could Do'].forEach(function(f){document.fonts.load('40px "'+f+'"')})}catch(e){}
