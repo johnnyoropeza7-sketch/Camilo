@@ -350,7 +350,7 @@ $('fwp').addEventListener('change',function(){var f=this.files[0];if(f)shrink(f,
 
 
 /* ---- administrador oculto: crea usuarios y claves ---- */
-var ADMH='e7dc6c798e5ccf2857fcc033afbef43c4118054e0c22645e828914cdbc097eb5',admBack='lock',KJ=null,KSHA='';
+var ADMH='bb116f4ee82c9909732796e2f62502b5cf551987fad82981075449588f07f9f1',admBack='lock',KJ=null,KSHA='';
 function admHash(){return ls('admh')||ADMH}
 function admCheck(pw){return sha('adm:'+pw).then(function(h){return h===admHash()})}
 function admOpen(from){admBack=from;show('adm');$('gr').value=ls('gr')||'';$('gb').value=ls('gbr')||'main';$('gt').value=ls('gtk')||'';$('am').textContent='';$('ar').style.display='none';$('agd').open=!(ls('gr')&&ls('gtk'));admLoad()}
